@@ -12,7 +12,7 @@ class ParserProcess(multiprocessing.Process):
     """
     Process to parse incoming data, parse it, and then distribute it to graph and storage.
     """
-    def __init__(self, data_queue, store_reference=None,
+    def __init__(self, passer_in_queue, data_queue, store_reference=None,
                  split=Constants.csv_delimiter,
                  consumer_timeout=Constants.parser_timeout_ms):
         """
@@ -28,7 +28,7 @@ class ParserProcess(multiprocessing.Process):
         """
         multiprocessing.Process.__init__(self)
         self._exit = multiprocessing.Event()
-        self._in_queue = multiprocessing.Queue()
+        self._in_queue = passer_in_queue
         self._out_queue = data_queue
         self._consumer_timeout = consumer_timeout
         self._split = split
@@ -93,7 +93,7 @@ class ParserProcess(multiprocessing.Process):
                     values = line.split(self._split)
                 else:
                     raise TypeError
-                values = [float(v) for v in values]
+                values = [float(v) for v in values[3:]]
                 Log.d(TAG, values)
                 self._out_queue.put((time, values))
                 if self._store_reference is not None:

@@ -52,7 +52,7 @@ class SimulatorProcess(multiprocessing.Process):
         coef = 2 * np.pi
         while not self._exit.is_set():
             stamp = time() - timestamp
-            self._parser.add([stamp, str(("{},{}\r\n".format(np.sin(coef * stamp), np.cos(coef * stamp))))
+            self._parser.put([stamp, str(("{},{}\r\n".format(np.sin(coef * stamp), np.cos(coef * stamp))))
                              .encode(Constants.app_encoding)])
             sleep(self._period)
         Log.i(TAG, "Process finished")

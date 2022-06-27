@@ -1,7 +1,7 @@
 from multiprocessing import freeze_support
 import sys
 from PyQt5 import QtGui
-
+from PyQt5.QtWidgets import QApplication
 from rtgraph.common.architecture import Architecture
 from rtgraph.common.arguments import *
 from rtgraph.common.logger import Logger as Log
@@ -16,7 +16,7 @@ class RTGraph:
     def __init__(self, argv=sys.argv):
         freeze_support()
         self._args = self._init_logger()
-        self._app = QtGui.QApplication(argv)
+        self._app = QApplication(argv)
 
     def run(self):
         if Architecture.is_python_version(MinimalPython.major, minor=MinimalPython.minor):

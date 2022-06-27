@@ -4,12 +4,12 @@ from rtgraph.core.worker import Worker
 from rtgraph.core.constants import Constants, SourceType
 from rtgraph.ui.popUp import PopUp
 from rtgraph.common.logger import Logger as Log
-
+from PyQt5.QtWidgets import QMainWindow
 
 TAG = "MainWindow"
 
 
-class MainWindow(QtGui.QMainWindow):
+class MainWindow(QMainWindow):
     """
     Handles the ui elements and connects to worker service to execute processes.
     """
@@ -23,7 +23,7 @@ class MainWindow(QtGui.QMainWindow):
         :param samples: Default samples per second to be shown in the plot.
         :type samples: int.
         """
-        QtGui.QMainWindow.__init__(self)
+        QMainWindow.__init__(self)
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 

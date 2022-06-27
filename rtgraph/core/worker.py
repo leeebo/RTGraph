@@ -46,6 +46,7 @@ class Worker:
 
         self._acquisition_process = None
         self._parser_process = None
+        self._passer_in_queue = Queue()
         self._csv_process = None
 
         self._port = port
@@ -63,16 +64,17 @@ class Worker:
         self.reset_buffers(self._samples)
         if self._export:
             self._csv_process = CSVProcess(path=self._path)
-            self._parser_process = ParserProcess(self._queue, store_reference=self._csv_process)
+            self._parser_process = ParserProcess(self._passer_in_queue, self._queue, store_reference=self._csv_process)
         else:
-            self._parser_process = ParserProcess(self._queue)
+            self._parser_process = ParserProcess(self._passer_in_queue, self._queue)
+            print("dd\n\n", self._passer_in_queue)
 
         if self._source == SourceType.serial:
-            self._acquisition_process = SerialProcess(self._parser_process)
+            self._acquisition_process = SerialProcess(self._passer_in_queue)
         elif self._source == SourceType.simulator:
-            self._acquisition_process = SimulatorProcess(self._parser_process)
+            self._acquisition_process = SimulatorProcess(self._passer_in_queue)
         elif self._source == SourceType.SocketClient:
-            self._acquisition_process = SocketProcess(self._parser_process)
+            self._acquisition_process = SocketProcess(self._passer_in_queue)
         if self._acquisition_process.open(port=self._port, speed=self._speed):
             self._parser_process.start()
             if self._export:

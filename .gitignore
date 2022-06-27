@@ -56,3 +56,5 @@ target/
 # Local data
 data/*.csv
 .idea/workspace.xml
+.idea
+rtgraph.si4project
