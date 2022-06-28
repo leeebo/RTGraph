@@ -103,7 +103,7 @@ class SerialProcess(multiprocessing.Process):
         :return: List of the common baud rates, in bps.
         :rtype: str list.
         """
-        return [str(v) for v in [1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200]]
+        return [str(v) for v in [115200, 2000000]]
 
     def _is_port_available(self, port):
         """

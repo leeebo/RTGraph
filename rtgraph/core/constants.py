@@ -20,7 +20,7 @@ class Constants:
     app_sources = ["Serial", "Simulator", "Socket Client"]
     app_encoding = "utf-8"
 
-    plot_update_ms = 16
+    plot_update_ms = 5
     plot_xlabel_title = "Time"
     plot_xlabel_unit = "s"
     plot_colors = ['#0072bd', '#d95319', '#edb120', '#7e2f8e', '#77ac30', '#4dbeee', '#a2142f']
@@ -30,7 +30,7 @@ class Constants:
 
     argument_default_samples = 500
 
-    serial_default_speed = 115200
+    serial_default_speed = 2000000
     serial_timeout_ms = 0.5
 
     class SocketClient:

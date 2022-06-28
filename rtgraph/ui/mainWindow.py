@@ -1,4 +1,4 @@
-from rtgraph.ui.mainWindow_ui import *
+from rtgraph.ui.ui_touchmain import *
 
 from rtgraph.core.worker import Worker
 from rtgraph.core.constants import Constants, SourceType
@@ -33,16 +33,16 @@ class MainWindow(QMainWindow):
         self.worker = Worker()
 
         # configures
-        self.ui.cBox_Source.addItems(Constants.app_sources)
+        self.ui.comboBox_source.addItems(Constants.app_sources)
         self._configure_plot()
         self._configure_timers()
         self._configure_signals()
 
         # populate combo box for serial ports
         self._source_changed()
-        self.ui.cBox_Source.setCurrentIndex(SourceType.serial.value)
+        self.ui.comboBox_source.setCurrentIndex(SourceType.serial.value)
 
-        self.ui.sBox_Samples.setValue(samples)
+        self.ui.spinBox.setValue(samples)
 
         # enable ui
         self._enable_ui(True)
@@ -54,18 +54,18 @@ class MainWindow(QMainWindow):
         :return:
         """
         Log.i(TAG, "Clicked start")
-        self.worker = Worker(port=self.ui.cBox_Port.currentText(),
-                             speed=float(self.ui.cBox_Speed.currentText()),
-                             samples=self.ui.sBox_Samples.value(),
+        self.worker = Worker(port=self.ui.comboBox_port.currentText(),
+                             speed=float(self.ui.comboBox_portspd.currentText()),
+                             samples=self.ui.spinBox.value(),
                              source=self._get_source(),
-                             export_enabled=self.ui.chBox_export.isChecked())
+                             export_enabled=self.ui.checkBox_file.isChecked())
         if self.worker.start():
             self._timer_plot.start(Constants.plot_update_ms)
             self._enable_ui(False)
         else:
             Log.i(TAG, "Port is not available")
             PopUp.warning(self, Constants.app_title, "Selected port \"{}\" is not available"
-                          .format(self.ui.cBox_Port.currentText()))
+                          .format(self.ui.comboBox_port.currentText()))
 
     def stop(self):
         """
@@ -96,12 +96,12 @@ class MainWindow(QMainWindow):
         :type enabled: bool
         :return:
         """
-        self.ui.cBox_Port.setEnabled(enabled)
-        self.ui.cBox_Speed.setEnabled(enabled)
-        self.ui.pButton_Start.setEnabled(enabled)
-        self.ui.chBox_export.setEnabled(enabled)
-        self.ui.cBox_Source.setEnabled(enabled)
-        self.ui.pButton_Stop.setEnabled(not enabled)
+        self.ui.comboBox_port.setEnabled(enabled)
+        self.ui.comboBox_portspd.setEnabled(enabled)
+        self.ui.pushButton_start.setEnabled(enabled)
+        self.ui.checkBox_file.setEnabled(enabled)
+        self.ui.comboBox_source.setEnabled(enabled)
+        self.ui.pushButton_pause.setEnabled(not enabled)
 
     def _configure_plot(self):
         """
@@ -126,10 +126,10 @@ class MainWindow(QMainWindow):
         Configures the connections between signals and UI elements.
         :return:
         """
-        self.ui.pButton_Start.clicked.connect(self.start)
-        self.ui.pButton_Stop.clicked.connect(self.stop)
-        self.ui.sBox_Samples.valueChanged.connect(self._update_sample_size)
-        self.ui.cBox_Source.currentIndexChanged.connect(self._source_changed)
+        self.ui.pushButton_start.clicked.connect(self.start)
+        self.ui.pushButton_pause.clicked.connect(self.stop)
+        self.ui.spinBox.valueChanged.connect(self._update_sample_size)
+        self.ui.comboBox_source.currentIndexChanged.connect(self._source_changed)
 
     def _update_sample_size(self):
         """
@@ -139,7 +139,7 @@ class MainWindow(QMainWindow):
         """
         if self.worker is not None:
             Log.i(TAG, "Changing sample size")
-            self.worker.reset_buffers(self.ui.sBox_Samples.value())
+            self.worker.reset_buffers(self.ui.spinBox.value())
 
     def _update_plot(self):
         """
@@ -164,19 +164,19 @@ class MainWindow(QMainWindow):
         """
         Log.i(TAG, "Scanning source {}".format(self._get_source().name))
         # clear boxes before adding new
-        self.ui.cBox_Port.clear()
-        self.ui.cBox_Speed.clear()
+        self.ui.comboBox_port.clear()
+        self.ui.comboBox_portspd.clear()
 
         source = self._get_source()
         ports = self.worker.get_source_ports(source)
         speeds = self.worker.get_source_speeds(source)
 
         if ports is not None:
-            self.ui.cBox_Port.addItems(ports)
+            self.ui.comboBox_port.addItems(ports)
         if speeds is not None:
-            self.ui.cBox_Speed.addItems(speeds)
+            self.ui.comboBox_portspd.addItems(speeds)
         if self._get_source() == SourceType.serial:
-            self.ui.cBox_Speed.setCurrentIndex(len(speeds) - 1)
+            self.ui.comboBox_portspd.setCurrentIndex(len(speeds) - 1)
 
     def _get_source(self):
         """
@@ -184,4 +184,4 @@ class MainWindow(QMainWindow):
         :return: Current Source type.
         :rtype: SourceType.
         """
-        return SourceType(self.ui.cBox_Source.currentIndex())
+        return SourceType(self.ui.comboBox_source.currentIndex())
